@@ -1,10 +1,15 @@
 """plot descriptives of the SEND dataset
 (for purpose of figuring out how to subset)
+
+Exports multiple figures and 1 csv with features for each video.
+The csv is what's used for the figures. Could probably
+move to separate scripts in the future.
 """
 import os
 import glob
 import numpy as np
 import pandas as pd
+import config as c
 
 from scipy import stats
 
@@ -20,7 +25,7 @@ plt.rcParams["mathtext.it"] = "Arial:italic"
 plt.rcParams["mathtext.bf"] = "Arial:bold"
 
 
-EXPORT_DIR = os.path.join(c.DATA_DIR, "derivatives", "SEND")
+EXPORT_DIR = os.path.join(c.DATA_DIR, "derivatives")
 SEND_DIR = os.path.join(c.DATA_DIR, "SENDv1")
 # send as in video dataset send
 

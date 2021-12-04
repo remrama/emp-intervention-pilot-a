@@ -29,8 +29,6 @@ plt.rcParams["interactive"] = True
 plt.rcParams["font.family"] = "sans-serif"
 plt.rcParams["font.sans-serif"] = "Arial"
 
-DATA_DIR = r"C:\Users\rrm2308\data\peace-empathy"
-EXPORT_DIR = r"C:\Users\rrm2308\data\peace-empathy"
 
 import_fname = os.path.join(c.DATA_DIR, "derivatives", "SEND-video_stats.csv")
 export_fname = os.path.join(c.DATA_DIR, "results", "SEND-final_videos.png")
