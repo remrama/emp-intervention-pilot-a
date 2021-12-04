@@ -36,7 +36,7 @@ df = pd.concat([ pd.read_csv(fn) for fn in import_fnames ], ignore_index=True)
 df["participant_id"] = pd.Categorical(df["run_id"], ordered=False)
 
 # identify which task was played during the middle for this participant
-df["task_condition"] = df["condition"].map({1:"mw", 3:"mw", 2:"bct", 4:"bct"})
+df["task_condition"] = df["condition"].map(c.CONDITION_MAP)
 
 
 

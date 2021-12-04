@@ -23,7 +23,8 @@ python send-select_vids.py  # ==> DATA_DIR/results/final_videos.png
 # The raw output from jsPsych is messy so first
 # just convert the raw output to a few csv files.
 python clean-empathy.py     # ==> DATA_DIR/derivatives/empathy.csv
-python clean-bct.py         # ==> DATA_DIR/derivatives/bct.csv
+python clean-bct.py         # ==> DATA_DIR/derivatives/bct-presses.csv
+                            # ==> DATA_DIR/derivatives/bct-cycles.csv
 
 # Run empathy task correlations and export csv with r values.
 python analyze-empathy.py   # ==> DATA_DIR/derivatives/empathy-correlations.csv
@@ -32,4 +33,9 @@ python analyze-empathy.py   # ==> DATA_DIR/derivatives/empathy-correlations.csv
 python plot-empathy_all.py  # ==> DATA_DIR/results/empathy-all.png
 python plot-empathy.py      # ==> DATA_DIR/results/empathy.csv
                             # ==> DATA_DIR/results/empathy.png
+
+# Plot some breath counting task results.
+python plot-bct-cycles.py   # ==> DATA_DIR/results/bct-respiration.png
+python plot-bct-presses.py  # ==> DATA_DIR/results/bct-allpresses.png
+                            # ==> DATA_DIR/results/bct-rtXpress.png
 ```

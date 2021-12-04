@@ -1,5 +1,12 @@
 DATA_DIR = r"C:\Users\rrm2308\data\tmr-empathy"
 
+CONDITION_MAP = {
+    1: "mw",
+    2: "bct",
+    3: "mw",
+    4: "bct"
+}
+
 def no_leading_zeros(x, pos):
     # a custom tick formatter for matplotlib
     # to show decimals without a leading zero
