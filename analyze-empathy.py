@@ -86,4 +86,5 @@ corrs = df.set_index(groupby_cols # set index first so the vals are accessible i
 
 
 # export
-corrs.to_csv(export_fname, index=True, encoding="utf-8", na_rep="NA")
+corrs.to_csv(export_fname, index=True, encoding="utf-8", na_rep="NA",
+    float_format="%.3f")
