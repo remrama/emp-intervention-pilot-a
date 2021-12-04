@@ -20,10 +20,9 @@ plt.rcParams["mathtext.it"] = "Arial:italic"
 plt.rcParams["mathtext.bf"] = "Arial:bold"
 
 
+EXPORT_DIR = os.path.join(c.DATA_DIR, "derivatives", "SEND")
+SEND_DIR = os.path.join(c.DATA_DIR, "SENDv1")
 # send as in video dataset send
-SEND_DIR = "./SENDv1"
-EXPORT_DIR = r"C:\Users\rrm2308\data\peace-empathy\SEND"
-
 
 # get a list of all the SEND video filenames
 video_fname_glob = os.path.join(SEND_DIR, "videos", "*.mp4")
