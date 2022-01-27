@@ -96,14 +96,14 @@ df["response_list"] = df["responses"].apply(json.loads)
 
 
 # Did they respond to all (empathy video) trials?
-remove_participants = []
+# remove_participants = []
 for pid, pid_df in df.groupby("participant_id"):
     n_no_response = pid_df["response_list"].str.len().eq(0).sum()
     if n_no_response > 0:
-        print(f"removing participant {pid} bc they didn't respond to {n_no_response} empathy task trials")
-        remove_participants.append(pid)
+        print(f"WARNING: participant {pid} did not respond to {n_no_response} empathy task trials. Keeping for now.")
+        # remove_participants.append(pid)
 
-df = df[ ~df["participant_id"].isin(remove_participants) ]
+# df = df[ ~df["participant_id"].isin(remove_participants) ]
 
 # break out the response list so each row
 # is a press rather than a single trial/video
