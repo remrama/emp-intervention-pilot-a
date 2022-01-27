@@ -18,7 +18,7 @@ helpers.load_matplotlib_settings()
 
 import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_presses.csv")
 
-export_fname1 = os.path.join(helpers.Config.data_directory, "results", "bct-rtXpress.png")
+export_fname1 = os.path.join(helpers.Config.data_directory, "results", "bct-respiration.png")
 export_fname2 = os.path.join(helpers.Config.data_directory, "results", "bct-allpresses.png")
 
 

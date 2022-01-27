@@ -34,7 +34,9 @@ df = pd.read_csv(import_fname)
 # average within pre and post for each subject
 df = df.groupby(["participant_id", "task_condition", "pre_post"]
     )["correlation"].mean(
-    ).reset_index()
+    ).reset_index(
+    ).sort_values(["participant_id", "task_condition", "pre_post"],
+                  ascending=[True, True, False])
 
 df.to_csv(export_fname_avgs, index=False, encoding="utf-8", na_rep="NA")
 

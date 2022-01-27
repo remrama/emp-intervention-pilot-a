@@ -17,7 +17,7 @@ helpers.load_matplotlib_settings()
 
 
 import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_cycles.csv")
-export_fname = os.path.join(helpers.Config.data_directory, "results", "bct-respiration.png")
+export_fname = os.path.join(helpers.Config.data_directory, "results", "bct-rtXpresses.png")
 
 
 df = pd.read_csv(import_fname)
