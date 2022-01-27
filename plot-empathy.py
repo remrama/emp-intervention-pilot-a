@@ -1,25 +1,31 @@
 """Plot the aggregate correlation results and run stats.
+
+IMPORTS
+=======
+    - correlations for each subj/video, derivatives/empathy-correlations.csv
+
+EXPORTS
+=======
+    - correlation group stats, derivatives/empathy-correlation_avgs.csv
+    - correlation group stats, derivatives/empathy-correlation_stats.csv
+    - correlation group stats, derivatives/empathy-correlation_plot.png
 """
 import os
 import pandas as pd
 import pingouin as pg
-import config as c
 
 import seaborn as sea
 import matplotlib.pyplot as plt
-plt.rcParams["savefig.dpi"] = 600
-plt.rcParams["interactive"] = True
-plt.rcParams["font.family"] = "sans-serif"
-plt.rcParams["font.sans-serif"] = "Arial"
-plt.rcParams["mathtext.fontset"] = "custom"
-plt.rcParams["mathtext.rm"] = "Arial"
-plt.rcParams["mathtext.it"] = "Arial:italic"
-plt.rcParams["mathtext.bf"] = "Arial:bold"
+
+import helpers
+
+helpers.load_matplotlib_settings()
 
 
-import_fname = os.path.join(c.DATA_DIR, "derivatives", "empathy-correlations.csv")
-export_fname_stats = os.path.join(c.DATA_DIR, "results", "empathy.csv")
-export_fname_plot  = os.path.join(c.DATA_DIR, "results", "empathy.png")
+import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-correlations.csv")
+export_fname_avgs  = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-correlation_avgs.csv")
+export_fname_stats = os.path.join(helpers.Config.data_directory, "results", "empathy-correlation_stats.csv")
+export_fname_plot  = os.path.join(helpers.Config.data_directory, "results", "empathy-correlation_plot.png")
 
 
 # load data
@@ -29,6 +35,8 @@ df = pd.read_csv(import_fname)
 df = df.groupby(["participant_id", "task_condition", "pre_post"]
     )["correlation"].mean(
     ).reset_index()
+
+df.to_csv(export_fname_avgs, index=False, encoding="utf-8", na_rep="NA")
 
 
 ################ run stats
@@ -43,18 +51,18 @@ stats.to_csv(export_fname_stats, index=False, encoding="utf-8", na_rep="NA")
 
 
 # variables
-COLORS = dict(mw="gainsboro", bct="orchid")
+COLORS = dict(rest="gainsboro", bct="orchid")
 FIGSIZE = (3, 3)
 
 # draw
 fig, ax = plt.subplots(figsize=FIGSIZE, constrained_layout=True)
 sea.barplot(data=df, y="correlation",
     x="pre_post", order=["pre", "post"],
-    hue="task_condition", hue_order=["mw", "bct"],
+    hue="task_condition", hue_order=["rest", "bct"],
     palette=COLORS, errwidth=1, capsize=.05, errcolor="k")
 sea.swarmplot(data=df, y="correlation",
     x="pre_post", order=["pre", "post"],
-    hue="task_condition", hue_order=["mw", "bct"],
+    hue="task_condition", hue_order=["rest", "bct"],
     dodge=2,
     palette=COLORS, edgecolor="k", linewidth=1)
 
@@ -67,13 +75,13 @@ ax.set_xlim(-.7, 1.7)
 ax.set_ylim(0, 1)
 ax.yaxis.set(major_locator=plt.MultipleLocator(.5),
              minor_locator=plt.MultipleLocator(.1),
-             major_formatter=plt.FuncFormatter(c.no_leading_zeros))
+             major_formatter=plt.FuncFormatter(helpers.no_leading_zeros))
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 
 # legend
 legend_handles = [ plt.matplotlib.patches.Patch(edgecolor="none",
-        facecolor=c, label=l.upper()) for l, c in COLORS.items() ]
+        facecolor=c, label=l) for l, c in COLORS.items() ]
 legend = ax.legend(handles=legend_handles,
     title="Intervention task",
     bbox_to_anchor=(0, 1), loc="upper left",
@@ -92,7 +100,7 @@ for test, p in pval_ser.items():
         pval_str = f"{p:.3f}".lstrip("0")
         pval_str = rf"$p={pval_str}$"
     if test == "task_condition":
-        txt = f"BCT/MW effect: {pval_str}"
+        txt = f"BCT/rest effect: {pval_str}"
         yval = 1
         weight = "normal"
     elif test == "pre_post":

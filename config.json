@@ -1,0 +1,12 @@
+{
+    "data_directory": "../data",
+    "stim_directory": "../stimuli",
+
+    "condition_mapping" : {
+        "1": "rest",
+        "2": "bct",
+        "3": "rest",
+        "4": "bct"
+    }
+
+}

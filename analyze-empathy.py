@@ -3,15 +3,24 @@ Get correlations for all videos/subjects
 and export a csv with 1 correlation per row.
 
 This is for stats and plotting elsewhere.
+
+IMPORTS
+=======
+    - cleaned task output, derivatives/empathy-data.csv
+
+EXPORTS
+=======
+    - correlations for each subj/video, derivatives/empathy-correlations.csv
 """
 import os
 import pandas as pd
 from scipy import stats
-import config as c
 
+import helpers
 
-import_fname = os.path.join(c.DATA_DIR, "derivatives", "empathy.csv")
-export_fname = os.path.join(c.DATA_DIR, "derivatives", "empathy-correlations.csv")
+import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-data.csv")
+export_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-correlations.csv")
+
 
 # load data
 df = pd.read_csv(import_fname)
@@ -44,7 +53,7 @@ def load_video_ratings(video_id):
     actor_id  = video_id.split("id")[1].split("-")[0]
     actor_nid = video_id.split("vid")[1]
     actor_basename = f"target_{actor_id}_{actor_nid}_normal.csv"
-    actor_filename = os.path.join(c.DATA_DIR, "SENDv1", "ratings", actor_basename)
+    actor_filename = os.path.join(helpers.Config.stim_directory, "SENDv1", "ratings", actor_basename)
     actor_ratings = pd.read_csv(actor_filename)[" rating"].values
     return actor_ratings
 

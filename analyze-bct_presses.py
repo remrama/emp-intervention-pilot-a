@@ -4,28 +4,22 @@ showing *every press* from every participant.
 and another descriptive plot showing timecourse (for troubleshooting mostly)
 """
 import os
-
 import numpy as np
 import pandas as pd
 
-import config as c
-
+import colorcet as cc
 import seaborn as sea
 import matplotlib.pyplot as plt
-plt.rcParams["savefig.dpi"] = 600
-plt.rcParams["interactive"] = True
-plt.rcParams["font.family"] = "sans-serif"
-plt.rcParams["font.sans-serif"] = "Arial"
-plt.rcParams["mathtext.fontset"] = "custom"
-plt.rcParams["mathtext.rm"] = "Arial"
-plt.rcParams["mathtext.it"] = "Arial:italic"
-plt.rcParams["mathtext.bf"] = "Arial:bold"
+
+import helpers
+
+helpers.load_matplotlib_settings()
 
 
-import_fname = os.path.join(c.DATA_DIR, "derivatives", "bct-presses.csv")
+import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_presses.csv")
 
-export_fname1 = os.path.join(c.DATA_DIR, "results", "bct-rtXpress.png")
-export_fname2 = os.path.join(c.DATA_DIR, "results", "bct-allpresses.png")
+export_fname1 = os.path.join(helpers.Config.data_directory, "results", "bct-rtXpress.png")
+export_fname2 = os.path.join(helpers.Config.data_directory, "results", "bct-allpresses.png")
 
 
 df = pd.read_csv(import_fname)
@@ -44,10 +38,12 @@ df.dropna(inplace=True)
 plot the timecourse of all presses all subjects
 """
 
+cmap = cc.cm.CET_R3
+
 _, ax = plt.subplots(figsize=(5,3), constrained_layout=True)
 sea.lineplot(data=df, x="pc", y="rt",
     hue="participant_id",
-    palette="cividis",
+    palette=cmap,
     # units="participant_id", estimator=None
     ax=ax)
 
@@ -138,7 +134,9 @@ def sec2min_formatter(x, pos=None):
 ax.set_xlim(0, EXP_LENGTH*60)
 ax.xaxis.set(major_locator=plt.MultipleLocator(60),
     major_formatter=sec2min_formatter)
-ax.yaxis.set(major_locator=plt.MultipleLocator(1))
+# ax.yaxis.set(major_locator=plt.MultipleLocator(1))
+ax.set_yticks(range(1, n_participants+1))
+ax.set_yticklabels(df["participant_id"].unique())
 ax.set_xlabel("Experiment time (minutes)", fontsize=10)
 ax.set_ylabel("Participant", fontsize=10)
 ax.set_ylim(.5, n_participants+.5)

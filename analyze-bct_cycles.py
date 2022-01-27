@@ -6,24 +6,18 @@ for now just try and predict accuracy on each cycle
 with the press/breath rate
 """
 import os
-import numpy as np
 import pandas as pd
-
-import config as c
 
 import seaborn as sea
 import matplotlib.pyplot as plt
-plt.rcParams["savefig.dpi"] = 600
-plt.rcParams["interactive"] = True
-plt.rcParams["font.family"] = "sans-serif"
-plt.rcParams["font.sans-serif"] = "Arial"
-plt.rcParams["mathtext.fontset"] = "custom"
-plt.rcParams["mathtext.rm"] = "Arial"
-plt.rcParams["mathtext.it"] = "Arial:italic"
-plt.rcParams["mathtext.bf"] = "Arial:bold"
 
-import_fname = os.path.join(c.DATA_DIR, "derivatives", "bct-cycles.csv")
-export_fname = os.path.join(c.DATA_DIR, "results", "bct-respiration.png")
+import helpers
+
+helpers.load_matplotlib_settings()
+
+
+import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_cycles.csv")
+export_fname = os.path.join(helpers.Config.data_directory, "results", "bct-respiration.png")
 
 
 df = pd.read_csv(import_fname)
@@ -47,4 +41,5 @@ g = sea.lmplot(data=plot_df, x="rt", y="correct",
 
 
 plt.savefig(export_fname)
+# helpers.save_hires_figs(export_fname)
 plt.close()

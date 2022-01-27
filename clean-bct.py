@@ -12,9 +12,14 @@ A cycle can be:
 Extract the relevant stuff from the jspsych/cognition
 output and does some calculations on that.
 
-Saves 2 separate dataframes
-    - 1 has a row for each press
-    - 1 has a row for each cycle
+IMPORTS
+=======
+    - cleaned task output, derivatives/empathy-data.csv
+
+EXPORTS
+=======
+    - csv with 1 row for each press, derivatives/bct-data_presses.csv
+    - csv with 1 row for each cycle, derivatives/bct-data_cycles.csv
 """
 import os
 import glob
@@ -22,16 +27,28 @@ import glob
 import numpy as np
 import pandas as pd
 
-import config as c
-
+import helpers
 
 ############  handle import/export filenames
 
-fname_glob = os.path.join(c.DATA_DIR, "empathic-accuracy_*.csv")
+fname_glob = os.path.join(helpers.Config.data_directory, "source", "*.csv")
 import_fnames = sorted(glob.glob(fname_glob))
 
-export_fname_press = os.path.join(c.DATA_DIR, "derivatives", "bct-presses.csv")
-export_fname_cycle = os.path.join(c.DATA_DIR, "derivatives", "bct-cycles.csv")
+export_fname_press = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_presses.csv")
+export_fname_cycle = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_cycles.csv")
+
+
+# # reduce to pilot subjects
+# if "pilot" in helpers.Config.data_directory:
+#     def subj_is_keeper(fn):
+#         sub_id = int(os.path.basename(fn).split(".")[0])
+#         return sub_id < helpers.Config.first_subject_batch2
+# else:
+#     def subj_is_keeper(fn):
+#         sub_id = int(os.path.basename(fn).split(".")[0])
+#         return sub_id >= helpers.Config.first_subject_batch2
+
+# import_fnames = [ fn for fn in import_fnames if subj_is_keeper(fn) ]
 
 
 ############  make some functions that will be used to parse input
@@ -90,10 +107,11 @@ def determine_cycle_accuracy(df):
 
 df_list = []
 for fn in import_fnames:
+
     df_ = pd.read_csv(fn)
 
     # make sure this participant did the BCT
-    if df_["condition"].map(c.CONDITION_MAP).eq("bct").all():
+    if df_["condition"].map(helpers.Config.condition_mapping).eq("bct").all():
         ##### handle *one participant's* dataframe
         """need to do a few things
         small --> large
@@ -106,7 +124,10 @@ for fn in import_fnames:
 
         # preprocess the jspsych output
         df_ = df_[df_["phase"]=="bct-test"]
-
+        if df_.size == 0:
+            sub_id = os.path.basename(fn).split(".")[0]
+            print(f"Skipping participant {sub_id} bc they had no BCT trials (but should have!)")
+            continue
         ## what's going on with the last row????
         ## no stimulus, but says it's correct and in the test phase???
         df_ = df_[df_["stimulus"].str.contains(r"\+")]

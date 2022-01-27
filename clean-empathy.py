@@ -5,6 +5,14 @@ csv file with the empathy rating data.
 Resample the raw empathic accuracy task ratings
 to match the rate of the SEND dataset (.5 seconds).
 Also z-score ratings within each video (after resampling).
+
+IMPORTS
+=======
+    - individual csv files (1 per subject) from data/source
+
+EXPORTS
+=======
+    - single csv of all subject data, derivatives/empathy-data.csv
 """
 import os
 import json
@@ -12,31 +20,39 @@ import glob
 import numpy as np
 import pandas as pd
 from scipy import stats
-import config as c
 
+import helpers
 
 SAMPLE_RATE = .5 # SEND dataset sample rate in seconds
 DEFAULT_RATING = 5 # neutral rating to start each video in the task
+
+
 
 # choose which columns to keep (timepoint and rating will be there too!)
 KEEP_COLUMNS = ["participant_id", "trial", "video_id", "pre_post", "task_condition"]
 
 
-fname_glob = os.path.join(c.DATA_DIR, "empathic-accuracy_*.csv")
+fname_glob = os.path.join(helpers.Config.data_directory, "source", "*.csv")
 import_fnames = sorted(glob.glob(fname_glob))
 
-export_fname = os.path.join(c.DATA_DIR, "derivatives", "empathy.csv")
+export_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-data.csv")
 
 
 # load in all subjects
 df = pd.concat([ pd.read_csv(fn) for fn in import_fnames ], ignore_index=True)
+
+# # remove pilot subjects
+# if "pilot" in helpers.Config.data_directory:
+#     df = helpers.remove_subjects(df, above=helpers.Config.first_subject_batch2-1)
+# else:
+#     df = helpers.remove_subjects(df, below=helpers.Config.first_subject_batch2)
 
 # rename run_id to participant_id bc it makes way more sense
 # (convert it to categorical while we're at it)
 df["participant_id"] = pd.Categorical(df["run_id"], ordered=False)
 
 # identify which task was played during the middle for this participant
-df["task_condition"] = df["condition"].map(c.CONDITION_MAP)
+df["task_condition"] = df["condition"].map(helpers.Config.condition_mapping)
 
 
 
@@ -49,12 +65,18 @@ df = df[ df["trial_type"].eq("empathic-accuracy-response") ].reset_index(drop=Tr
 # which has the unique trial for each participant
 df["trial"] = 1 + df.groupby("run_id").run_id.transform(lambda s: range(s.size))
 
+# check whether they did stuff (EMPATHY task stuff)
+# Do all trials exist in the file?
+assert df["trial"].nunique() == 10, "Participant didn't complete all trials :/"
+
+df.query("participant_id==81")["responses"]
 # denote whether the trial was pre or post intervention
 df["pre_post"] = df["trial"].apply(lambda x: "pre" if x < 6 else "post")
 df["pre_post"] = pd.Categorical(df["pre_post"],
         categories=["pre", "post"], ordered=True)
-df.loc[1, "pre_post"] = "post"
-print("REMOVE AFTER PILOT")
+if "pilot" in helpers.Config.data_directory:
+    df.loc[1, "pre_post"] = "post"
+    print("REMOVE AFTER PILOT")
 
 
 # extract a meaningful code representing the video of each trial
@@ -71,6 +93,17 @@ df["video_id"] =  df["stimulus"].str.split('"'
 
 # turn the responses column from string to list
 df["response_list"] = df["responses"].apply(json.loads)
+
+
+# Did they respond to all (empathy video) trials?
+remove_participants = []
+for pid, pid_df in df.groupby("participant_id"):
+    n_no_response = pid_df["response_list"].str.len().eq(0).sum()
+    if n_no_response > 0:
+        print(f"removing participant {pid} bc they didn't respond to {n_no_response} empathy task trials")
+        remove_participants.append(pid)
+
+df = df[ ~df["participant_id"].isin(remove_participants) ]
 
 # break out the response list so each row
 # is a press rather than a single trial/video
@@ -112,7 +145,7 @@ def resample_ratings(df_):
     actor_id  = video_id.split("-")[0][2:]
     actor_nid = video_id.split("-")[1][3:]
     actor_basename = f"target_{actor_id}_{actor_nid}_normal.csv"
-    actor_filename = os.path.join(c.DATA_DIR, "SENDv1", "ratings", actor_basename)
+    actor_filename = os.path.join(helpers.Config.stim_directory, "SENDv1", "ratings", actor_basename)
     max_time = pd.read_csv(actor_filename)["time"].max()
     # max_time = ser_.index.max()
     resampled_indx = np.arange(0, max_time+SAMPLE_RATE, SAMPLE_RATE)
