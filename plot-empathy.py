@@ -17,15 +17,15 @@ import pingouin as pg
 import seaborn as sea
 import matplotlib.pyplot as plt
 
-import helpers
+import utils
 
-helpers.load_matplotlib_settings()
+utils.load_matplotlib_settings()
 
 
-import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-correlations.csv")
-export_fname_avgs  = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-correlation_avgs.csv")
-export_fname_stats = os.path.join(helpers.Config.data_directory, "results", "empathy-correlation_stats.csv")
-export_fname_plot  = os.path.join(helpers.Config.data_directory, "results", "empathy-correlation_plot.png")
+import_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-correlations.csv")
+export_fname_avgs  = os.path.join(utils.Config.data_directory, "derivatives", "empathy-correlation_avgs.csv")
+export_fname_stats = os.path.join(utils.Config.data_directory, "results", "empathy-correlation_stats.csv")
+export_fname_plot  = os.path.join(utils.Config.data_directory, "results", "empathy-correlation_plot.png")
 
 
 # load data
@@ -77,7 +77,7 @@ ax.set_xlim(-.7, 1.7)
 ax.set_ylim(0, 1)
 ax.yaxis.set(major_locator=plt.MultipleLocator(.5),
              minor_locator=plt.MultipleLocator(.1),
-             major_formatter=plt.FuncFormatter(helpers.no_leading_zeros))
+             major_formatter=plt.FuncFormatter(utils.no_leading_zeros))
 ax.spines["top"].set_visible(False)
 ax.spines["right"].set_visible(False)
 

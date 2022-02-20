@@ -27,26 +27,26 @@ import glob
 import numpy as np
 import pandas as pd
 
-import helpers
+import utils
 
 ############  handle import/export filenames
 
-fname_glob = os.path.join(helpers.Config.data_directory, "source", "*.csv")
+fname_glob = os.path.join(utils.Config.data_directory, "source", "*.csv")
 import_fnames = sorted(glob.glob(fname_glob))
 
-export_fname_press = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_presses.csv")
-export_fname_cycle = os.path.join(helpers.Config.data_directory, "derivatives", "bct-data_cycles.csv")
+export_fname_press = os.path.join(utils.Config.data_directory, "derivatives", "bct-data_presses.csv")
+export_fname_cycle = os.path.join(utils.Config.data_directory, "derivatives", "bct-data_cycles.csv")
 
 
 # # reduce to pilot subjects
-# if "pilot" in helpers.Config.data_directory:
+# if "pilot" in utils.Config.data_directory:
 #     def subj_is_keeper(fn):
 #         sub_id = int(os.path.basename(fn).split(".")[0])
-#         return sub_id < helpers.Config.first_subject_batch2
+#         return sub_id < utils.Config.first_subject_batch2
 # else:
 #     def subj_is_keeper(fn):
 #         sub_id = int(os.path.basename(fn).split(".")[0])
-#         return sub_id >= helpers.Config.first_subject_batch2
+#         return sub_id >= utils.Config.first_subject_batch2
 
 # import_fnames = [ fn for fn in import_fnames if subj_is_keeper(fn) ]
 
@@ -111,7 +111,7 @@ for fn in import_fnames:
     df_ = pd.read_csv(fn)
 
     # make sure this participant did the BCT
-    if df_["condition"].map(helpers.Config.condition_mapping).eq("bct").all():
+    if df_["condition"].map(utils.Config.condition_mapping).eq("bct").all():
         ##### handle *one participant's* dataframe
         """need to do a few things
         small --> large
@@ -186,13 +186,19 @@ cycle_bc = df_cycle.groupby(["participant_id", "cycle"]
     # )["bc"].apply(lambda s: s.max()+1 if 0 in s.tolist() else s.max()
     ).apply(lambda df: df.iloc[-2].bc+1 if df.iloc[-1].response=="space" else df.iloc[-1].bc
     ).rename("final_breath")
+cycle_timestamp = df_cycle.groupby(["participant_id", "cycle"]
+    # )["bc"].apply(lambda s: s.max()+1 if 0 in s.tolist() else s.max()
+    ).apply(lambda df: df.iloc[-2]["rt_sum"] if df.iloc[-1].response=="space" else df.iloc[-1]["rt_sum"]
+    ).rename("final_breath_rt_sum")
 
 # cycle_df = cycle_acc.to_frame().join(cycle_bc).sort_index()
-cycle_df = pd.concat([cycle_bc, cycle_acc, cycle_rt, cycle_rt_std], axis=1)
+cycle_df = pd.concat([cycle_bc, cycle_acc, cycle_rt,
+    cycle_rt_std, cycle_timestamp], axis=1)
 # cycle_acc["acc2"] = cycle_acc["acc1"].str.split("-").str[0]
 # cycle_acc["acc3"] = (cycle_acc["acc1"] == "correct")
 
-assert not cycle_df.isnull().values.any()
+# standard deviation can be NA, if there is just 1 press in a miscount trial
+assert cycle_df.notna().drop(columns="rt_std").all(axis=None)
 # cycle_acc = cycle_acc.reset_index(drop=False)
 
 

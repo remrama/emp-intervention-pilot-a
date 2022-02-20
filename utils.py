@@ -61,7 +61,7 @@ def no_leading_zeros(x, pos):
         return val_str
 
 
-def save_hires_figs(png_fname, hires_extensions=[".svg", ".eps", ".pdf"]):
+def save_hires_figs(png_fname, hires_extensions=[".pdf"]):
     # replace the extension and go down into a "hires" folder which should be there
     import os
     from matplotlib.pyplot import savefig

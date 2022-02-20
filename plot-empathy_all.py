@@ -11,15 +11,15 @@ import colorcet as cc
 import seaborn as sea
 import matplotlib.pyplot as plt
 
-import helpers
+import utils
 
-helpers.load_matplotlib_settings()
+utils.load_matplotlib_settings()
 
 SAMPLE_RATE = .5
 
 
-import_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-data.csv")
-export_fname = os.path.join(helpers.Config.data_directory, "results", "empathy-correlations_temporal_plot.png")
+import_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-data.csv")
+export_fname = os.path.join(utils.Config.data_directory, "results", "empathy-correlations_temporal_plot.png")
 
 
 # load data
@@ -51,8 +51,8 @@ for (video_id, vid_df), ax in zip(df.groupby("video_id"), axes.flat):
     actor_nid = video_id.split("vid")[1]
     actor_basename = f"target_{actor_id}_{actor_nid}_normal.csv"
     crowd_basename = f"results_{actor_id}_{actor_nid}.csv"
-    actor_filename = os.path.join(helpers.Config.stim_directory, "SENDv1", "ratings", actor_basename)
-    crowd_filename = os.path.join(helpers.Config.stim_directory, "SENDv1", "ratings", crowd_basename)
+    actor_filename = os.path.join(utils.Config.stim_directory, "SENDv1", "ratings", actor_basename)
+    crowd_filename = os.path.join(utils.Config.stim_directory, "SENDv1", "ratings", crowd_basename)
     actor_ratings = pd.read_csv(actor_filename, index_col="time")[" rating"].values
     crowd_ratings = pd.read_csv(crowd_filename, index_col="time")["evaluatorWeightedEstimate"].values
     actor_ratings = stats.zscore(actor_ratings, nan_policy="raise")
@@ -69,26 +69,26 @@ for (video_id, vid_df), ax in zip(df.groupby("video_id"), axes.flat):
         color = cmap(norm(participant_num))
         subj_ratings = stats.zscore(ser.values, nan_policy="raise")
         xvals = np.arange(0, len(subj_ratings)*SAMPLE_RATE, SAMPLE_RATE)
-        ax.plot(xvals, subj_ratings, color=color, alpha=.6, lw=1, ls="solid", zorder=1)
-    if ax.get_subplotspec().is_first_col() and ax.get_subplotspec().is_first_row():
-        legend = ax.legend(bbox_to_anchor=(1, .1), loc="lower right",
-            handles=legend_subj_handles,
-            title="subject",
-            fontsize=8,
-            borderaxespad=0, frameon=False,
-            handlelength=1,
-            labelspacing=.2,  # vertical space between entries
-            handletextpad=.2) # space between legend markers and labels
-        legend._legend_box.align = "right"
+        ax.plot(xvals, subj_ratings, color=color, alpha=.25, lw=1, ls="solid", zorder=1)
+    # if ax.get_subplotspec().is_first_col() and ax.get_subplotspec().is_first_row():
+    #     legend = ax.legend(bbox_to_anchor=(1, .1), loc="lower right",
+    #         handles=legend_subj_handles,
+    #         title="subject",
+    #         fontsize=8,
+    #         borderaxespad=0, frameon=False,
+    #         handlelength=1,
+    #         labelspacing=.2,  # vertical space between entries
+    #         handletextpad=.2) # space between legend markers and labels
+    #     legend._legend_box.align = "right"
 
     # ax.set_xbound(lower=0)
     # ax.set_ylim(0, 1)
     ax.xaxis.set(major_locator=plt.MultipleLocator(60),
                  minor_locator=plt.MultipleLocator(10),
-                 major_formatter=plt.FuncFormatter(helpers.no_leading_zeros))
+                 major_formatter=plt.FuncFormatter(utils.no_leading_zeros))
     # ax.yaxis.set(major_locator=plt.MultipleLocator(1),
     #              minor_locator=plt.MultipleLocator(.1),
-    #              major_formatter=plt.FuncFormatter(helpers.no_leading_zeros))
+    #              major_formatter=plt.FuncFormatter(utils.no_leading_zeros))
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     if ax.get_subplotspec().is_first_col() and ax.get_subplotspec().is_last_row():

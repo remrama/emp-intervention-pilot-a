@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-import helpers
+import utils
 
 SAMPLE_RATE = .5 # SEND dataset sample rate in seconds
 DEFAULT_RATING = 5 # neutral rating to start each video in the task
@@ -32,27 +32,27 @@ DEFAULT_RATING = 5 # neutral rating to start each video in the task
 KEEP_COLUMNS = ["participant_id", "trial", "video_id", "pre_post", "task_condition"]
 
 
-fname_glob = os.path.join(helpers.Config.data_directory, "source", "*.csv")
+fname_glob = os.path.join(utils.Config.data_directory, "source", "*.csv")
 import_fnames = sorted(glob.glob(fname_glob))
 
-export_fname = os.path.join(helpers.Config.data_directory, "derivatives", "empathy-data.csv")
+export_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-data.csv")
 
 
 # load in all subjects
 df = pd.concat([ pd.read_csv(fn) for fn in import_fnames ], ignore_index=True)
 
 # # remove pilot subjects
-# if "pilot" in helpers.Config.data_directory:
-#     df = helpers.remove_subjects(df, above=helpers.Config.first_subject_batch2-1)
+# if "pilot" in utils.Config.data_directory:
+#     df = utils.remove_subjects(df, above=utils.Config.first_subject_batch2-1)
 # else:
-#     df = helpers.remove_subjects(df, below=helpers.Config.first_subject_batch2)
+#     df = utils.remove_subjects(df, below=utils.Config.first_subject_batch2)
 
 # rename run_id to participant_id bc it makes way more sense
 # (convert it to categorical while we're at it)
 df["participant_id"] = pd.Categorical(df["run_id"], ordered=False)
 
 # identify which task was played during the middle for this participant
-df["task_condition"] = df["condition"].map(helpers.Config.condition_mapping)
+df["task_condition"] = df["condition"].map(utils.Config.condition_mapping)
 
 
 
@@ -74,7 +74,7 @@ df.query("participant_id==81")["responses"]
 df["pre_post"] = df["trial"].apply(lambda x: "pre" if x < 6 else "post")
 df["pre_post"] = pd.Categorical(df["pre_post"],
         categories=["pre", "post"], ordered=True)
-if "pilot" in helpers.Config.data_directory:
+if "pilot" in utils.Config.data_directory:
     df.loc[1, "pre_post"] = "post"
     print("REMOVE AFTER PILOT")
 
@@ -145,7 +145,7 @@ def resample_ratings(df_):
     actor_id  = video_id.split("-")[0][2:]
     actor_nid = video_id.split("-")[1][3:]
     actor_basename = f"target_{actor_id}_{actor_nid}_normal.csv"
-    actor_filename = os.path.join(helpers.Config.stim_directory, "SENDv1", "ratings", actor_basename)
+    actor_filename = os.path.join(utils.Config.stim_directory, "SENDv1", "ratings", actor_basename)
     max_time = pd.read_csv(actor_filename)["time"].max()
     # max_time = ser_.index.max()
     resampled_indx = np.arange(0, max_time+SAMPLE_RATE, SAMPLE_RATE)
