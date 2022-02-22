@@ -8,13 +8,12 @@ with the press/breath rate
 import os
 import numpy as np
 import pandas as pd
-
-import colorcet as cc
 import matplotlib.pyplot as plt
 
 import utils
 
 utils.load_matplotlib_settings()
+subj_palette = utils.load_subject_palette()
 
 
 import_fname = os.path.join(utils.Config.data_directory, "derivatives", "bct-data_cycles.csv")
@@ -65,13 +64,22 @@ labels = {
     "rr_std": r"$\mathrm{Respiration\ rate\ variation,\ }\sigma_{\bar{f_{R}}}$",
 }
 
-subs = subavgs.index.get_level_values("participant_id").unique().to_list()
-color_normvals = [ i/(len(subs)-1) for i, _ in enumerate(subs) ]
-colormap = cc.cm.CET_R3.copy()
-colors = colormap(color_normvals)
+colors = [ subj_palette[s] for s in subavgs.index.get_level_values("participant_id").unique() ]
+# color_cycler = plt.cycler("color", colors)
 
-fig, axes = plt.subplots(ncols=2, figsize=(3, 3),
-    constrained_layout=True)
+FIGSIZE = (3, 3)
+SUBJ_JITTER = .05
+XLIM_EDGEBUFFER = .8
+BAR_KWARGS = dict(edgecolor="black", linewidth=1, width=.6,
+    error_kw=dict(capsize=0, ecolor="black", elinewidth=1))
+PLOT_KWARGS = dict(markersize=4, alpha=1, linewidth=.5,
+    markeredgewidth=.5, markeredgecolor="white")
+SCATTER_KWARGS = dict(alpha=1, linewidth=.5, edgecolor="white",
+    clip_on=False, zorder=100)
+
+
+fig, axes = plt.subplots(ncols=2, figsize=FIGSIZE,
+    gridspec_kw=dict(wspace=.1))
 
 for ax, m in zip(axes, measure_order):
 
@@ -80,16 +88,14 @@ for ax, m in zip(axes, measure_order):
     evals = summdf[m].loc[correct_order, "sem"]
     xvals = np.arange(yvals.size)
 
-    bars = ax.bar(xvals, yvals, yerr=evals, color=correct_colors,
-        edgecolor="black", linewidth=1, width=.6,
-        error_kw=dict(capsize=0, ecolor="black", elinewidth=1))
+    bars = ax.bar(xvals, yvals, yerr=evals,
+        color=correct_colors, **BAR_KWARGS)
     bars.errorbar.lines[2][0].set_capstyle("round")
 
     ax.set_xticks(xvals)
     ax.set_xticklabels(correct_order)
     ax.set_ylabel(labels[m])
-    ax.tick_params(axis="both", which="both", direction="in",
-        bottom=False, right=True)
+    ax.tick_params(bottom=False)
     ax.set_xlabel("BCT trial accuracy")
 
     data = subavgs[m].unstack()[correct_order].values
@@ -97,17 +103,12 @@ for ax, m in zip(axes, measure_order):
     # sizedatanorm = plt.(sizedata - sizedata.min()) / sizedata.max()
     sizedatanorm = plt.Normalize(0, sizedata.max())
     np.random.seed(1)
-    JITTER = 0.05    
     for c, row, sizes in zip(colors, data, sizedata):
-        jittered_xvals = xvals + np.random.normal(loc=0, scale=JITTER)
-        ax.plot(jittered_xvals, row, "-", color=c, alpha=1,
-            markeredgewidth=.5, markeredgecolor="white",
-            linewidth=.5, markersize=4)
-
+        jittered_xvals = xvals + np.random.normal(loc=0, scale=SUBJ_JITTER)
+        ax.plot(jittered_xvals, row, "-", color=c, **PLOT_KWARGS)
         msizes = 30*sizedatanorm(sizes)
         ax.scatter(jittered_xvals, row, s=msizes,
-            color=c, alpha=1,
-            linewidth=.5, edgecolor="white", clip_on=False, zorder=100)
+            color=c, **SCATTER_KWARGS)
 
     smin = sizedata.min()
     smax = sizedata.max()
@@ -118,21 +119,12 @@ for ax, m in zip(axes, measure_order):
         for s in [10, smid, smax] ]
     legend = ax.legend(handles=legend_handles[::-1],
         loc="upper right", bbox_to_anchor=(1, .85),
-        title=r"$n$ trials", frameon=False,
-        labelspacing=.2, handletextpad=0)
+        title=r"$n$ trials", handletextpad=0)
 
-
-    xlim_buffer = .8
-    ax.set_xlim(xvals[0]-xlim_buffer, xvals[-1]+xlim_buffer)
-    # ax.yaxis.set(major_locator=plt.MultipleLocator(.5),
-    #     minor_locator=plt.MultipleLocator(.1))
-    ax.grid(visible=True, axis="y", which="major",
-        linewidth=1, alpha=1, color="gainsboro")
-    ax.set_axisbelow(True)
-
-
-
+    ax.set_xlim(xvals[0]-XLIM_EDGEBUFFER, xvals[-1]+XLIM_EDGEBUFFER)
+    ax.yaxis.set(major_locator=plt.MaxNLocator(nbins=5, min_n_ticks=3, steps=[1, 10]))
 
 
 plt.savefig(export_fname)
+utils.save_hires_copies(export_fname)
 plt.close()
