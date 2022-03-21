@@ -32,6 +32,10 @@ export_fname_plot  = os.path.join(utils.Config.data_directory, "results", "empat
 # load data
 df = pd.read_csv(import_fname)
 
+# df = df[~df["trial"].isin([1, 6])]
+# df = df[~df["participant_id"].isin([61, 81])]
+
+
 # average within pre and post for each subject
 df = df.groupby(["participant_id", "task_condition", "pre_post"]
     )["correlation"].mean(
@@ -40,7 +44,8 @@ df = df.groupby(["participant_id", "task_condition", "pre_post"]
                   ascending=[True, True, False])
 
 df.to_csv(export_fname_avgs, index=False, encoding="utf-8", na_rep="NA")
-
+# df.pivot(index=["participant_id", "task_condition"],
+#     columns="pre_post", values="correlation").to_csv("./test.csv", na_rep="NA")
 
 ################ run stats
 
