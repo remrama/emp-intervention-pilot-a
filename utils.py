@@ -85,17 +85,23 @@ def load_subject_palette(separate_by_task=True):
     import os
     import pandas as pd
     import colorcet as cc
-    import_fname = os.path.join(Config.data_directory, "derivatives", "empathy-data.csv")
-    df = pd.read_csv(import_fname).sort_values("participant_id")
+    emp_fname = os.path.join(Config.data_directory, "derivatives", "empathy-data.csv")
+    bct_fname = os.path.join(Config.data_directory, "derivatives", "bct-data_presses.csv")
+    df_emp = pd.read_csv(emp_fname).sort_values("participant_id")
+    df_bct = pd.read_csv(bct_fname).sort_values("participant_id")
     if separate_by_task:
-        unique_bct_subjects = df.query("task_condition=='bct'")["participant_id"].unique()
-        unique_rest_subjects = df.query("task_condition=='rest'")["participant_id"].unique()
+        unique_rest_subjects = df_emp.query("task_condition=='rest'")["participant_id"].unique()
+        unique_bct_subjects1 = df_emp.query("task_condition=='bct'")["participant_id"].unique()
+        unique_bct_subjects2 = df_bct["participant_id"].unique()
+        unique_bct_subjects = sorted(list(set(unique_bct_subjects1) & set(unique_bct_subjects2)))
         bct_subj_palette = { subj: cc.cm.glasbey_cool(i) for i, subj in enumerate(unique_bct_subjects) }
         rest_subj_palette = { subj: cc.cm.glasbey_warm(i) for i, subj in enumerate(unique_rest_subjects) }
         assert 0 == len(bct_subj_palette.keys() & rest_subj_palette.keys()), "Should not have overlapping subjects."
         subj_palette = bct_subj_palette | rest_subj_palette
     else: # glasbey_bw or glasbey_dark
-        unique_subjects = df["participant_id"].unique()
+        unique_subjects1 = df_emp["participant_id"].unique()
+        unique_subjects2 = df_bct["participant_id"].unique()
+        unique_subjects = sorted(list(set(unique_subjects1) & set(unique_subjects2)))
         subj_palette = { subj: cc.cm.glasbey_dark(i) for i, subj in enumerate(unique_subjects) }
     return subj_palette
 

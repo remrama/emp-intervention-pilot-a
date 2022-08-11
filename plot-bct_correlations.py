@@ -33,7 +33,7 @@ print("still unclear about handling nan cycles from repeated presses")
 
 
 
-export_fname = os.path.join(utils.Config.data_directory, "results", "bct-pairplot.png")
+export_fname = os.path.join(utils.Config.data_directory, "results", "bct-correlations.png")
 
 
 #### Loading in a lot of different data for this.
@@ -43,7 +43,7 @@ data_dir = utils.Config.data_directory
 
 
 ##### Load/extract subject-level variables for respiration rate.
-import_fname = os.path.join(data_dir, "results", "bct-respirationrate.csv")
+import_fname = os.path.join(data_dir, "results", "bct-respiration.csv")
 rr_subj_descriptives = pd.read_csv(import_fname, index_col="participant_id")
 RESPIRATION_VARIABLES = ["mean", "std", "slope"]
 rr_subj_descriptives = rr_subj_descriptives[RESPIRATION_VARIABLES]
@@ -105,7 +105,7 @@ RUG_KWARGS = dict(ymax=.1, alpha=.75, linewidth=2)
 
 SYMMETRIC_VARS = ["slope", "empathy_change"]
 
-colors = [ subj_palette[s] for s in df.index ]
+colors = [ subj_palette[s] if s in subj_palette else "gray" for s in df.index ]
 
 for r in range(n_vars):
     for c in range(n_vars):

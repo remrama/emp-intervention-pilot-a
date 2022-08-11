@@ -13,7 +13,7 @@ subj_palette = utils.load_subject_palette()
 
 
 import_fname = os.path.join(utils.Config.data_directory, "derivatives", "bct-data_presses.csv")
-export_plot_fname = os.path.join(utils.Config.data_directory, "results", "bct-respirationrate.png")
+export_plot_fname = os.path.join(utils.Config.data_directory, "results", "bct-respiration.png")
 export_table_fname = export_plot_fname.replace(".png", ".csv")
 
 
@@ -67,8 +67,10 @@ rr_table = rr_table.iloc[:, 60:-60].copy()
 
 # Gaussian smoothing over respiration rate.
 rr_table = rr_table.rolling(60, axis=1,
-        center=True, min_periods=1, win_type="gaussian", closed="both",
-    ).mean(std=3)
+        # center=True, min_periods=1, win_type="gaussian", closed="both",
+        center=True, min_periods=1, closed="both",
+    # ).mean(std=3)
+    ).mean()
 
 
 ## That's the individual subject data.
@@ -119,7 +121,7 @@ TEXT_KWARGS = dict(color="gainsboro", ha="left", va="bottom", zorder=0)
 
 # Set xvalues in minutes.
 xvals = [ x.seconds/60 for x in rr_table.columns.to_pytimedelta() ]
-colors = [ subj_palette[s] for s in rr_table.index ]
+colors = [ subj_palette[s] if s in subj_palette else "gray" for s in rr_table.index ]
 
 fig, axes = plt.subplots(nrows=2, figsize=FIGSIZE,
     sharex=True, gridspec_kw=dict(height_ratios=[1, 2]))

@@ -75,7 +75,7 @@ bars.errorbar.lines[2][0].set_capstyle("round")
 # Draw individual subjects.
 np.random.seed(1)
 for subj, subj_row in bct_acc_timetable.iterrows():
-    c = subj_palette[subj]
+    c = subj_palette[subj] if subj in subj_palette else "white"
     jittered_xvals = XVALS + np.random.normal(loc=0, scale=SUBJ_JITTER)
     ax.plot(jittered_xvals, subj_row.values, "-o", color=c, **PLOT_KWARGS)
 

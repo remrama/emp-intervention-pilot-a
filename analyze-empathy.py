@@ -13,6 +13,7 @@ EXPORTS
     - correlations for each subj/video, derivatives/empathy-correlations.csv
 """
 import os
+import numpy as np
 import pandas as pd
 from scipy import stats
 
@@ -85,6 +86,7 @@ def get_correlation(ser_):
     true_z = stats.zscore(true_[:last], nan_policy="raise")
     subj_z = stats.zscore(subj_[:last], nan_policy="raise")
     r, _ = stats.pearsonr(true_z, subj_z)
+    r = np.arctanh(r) # fisher transform
     return r
 
 groupby_cols = [ c for c in df if c not in ["time", "rating"] ]

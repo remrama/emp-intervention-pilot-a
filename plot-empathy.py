@@ -56,7 +56,7 @@ anova_stats = pg.mixed_anova(data=stats_df, dv="correlation",
     between="task_condition", within="pre_post", subject="participant_id",
     effsize="np2", correction="auto")
 
-pairwise_stats = pg.pairwise_ttests(data=stats_df, dv="correlation",
+pairwise_stats = pg.pairwise_tests(data=stats_df, dv="correlation",
     between="task_condition", within="pre_post", subject="participant_id",
     effsize="hedges", correction="auto",
     parametric=False, marginal=True, padjust="none",
@@ -114,7 +114,7 @@ for subj, subj_df in df.groupby("participant_id"):
 
 ax.axhline(0, linewidth=1, linestyle="solid", color="black")
 ax.set_xticks([xvals[:2].mean(), xvals[2:].mean()])
-xticklabels = [ x.upper() + "\nintervention" for x in TASK_ORDER ]
+xticklabels = [ x.replace("bct", "lkm").upper() + "\nintervention" for x in TASK_ORDER ]
 ax.set_xticklabels(xticklabels)
 ylabel = r"Empathetic accuracy, $r_{E}$"
 #ylabel += "\n" + r"$\rightarrow$ perfect agreement"

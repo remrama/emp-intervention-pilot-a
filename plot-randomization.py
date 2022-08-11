@@ -9,7 +9,7 @@ utils.load_matplotlib_settings()
 subj_palette = utils.load_subject_palette()
 
 import_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-correlations.csv")
-export_fname = os.path.join(utils.Config.data_directory, "results", "emp-videosets.png")
+export_fname = os.path.join(utils.Config.data_directory, "results", "empathy-videosets.png")
 
 df = pd.read_csv(import_fname)
 

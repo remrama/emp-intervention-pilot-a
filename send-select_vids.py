@@ -20,7 +20,7 @@ import pandas as pd
 from scipy.stats import zscore
 from sklearn import metrics
 
-import config as c
+import utils
 
 import seaborn as sea
 import matplotlib.pyplot as plt
@@ -30,8 +30,8 @@ plt.rcParams["font.family"] = "sans-serif"
 plt.rcParams["font.sans-serif"] = "Arial"
 
 
-import_fname = os.path.join(c.DATA_DIR, "derivatives", "SEND-video_stats.csv")
-export_fname = os.path.join(c.DATA_DIR, "results", "SEND-final_videos.png")
+import_fname = os.path.join(utils.Config.data_directory, "derivatives", "SEND-video_stats.csv")
+export_fname = os.path.join(utils.Config.data_directory, "results", "SEND-final_videos.png")
 
 
 df = pd.read_csv(import_fname)

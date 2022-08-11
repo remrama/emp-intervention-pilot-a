@@ -64,7 +64,8 @@ labels = {
     "rr_std": r"$\mathrm{Respiration\ rate\ variation,\ }\sigma_{\bar{f_{R}}}$",
 }
 
-colors = [ subj_palette[s] for s in subavgs.index.get_level_values("participant_id").unique() ]
+colors = [ subj_palette[s] if s in subj_palette else "white"
+    for s in subavgs.index.get_level_values("participant_id").unique() ]
 # color_cycler = plt.cycler("color", colors)
 
 FIGSIZE = (3, 3)

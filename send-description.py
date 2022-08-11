@@ -9,9 +9,10 @@ import os
 import glob
 import numpy as np
 import pandas as pd
-import config as c
 
 from scipy import stats
+
+import utils
 
 import seaborn as sea
 import matplotlib.pyplot as plt
@@ -25,8 +26,9 @@ plt.rcParams["mathtext.it"] = "Arial:italic"
 plt.rcParams["mathtext.bf"] = "Arial:bold"
 
 
-EXPORT_DIR = os.path.join(c.DATA_DIR, "derivatives")
-SEND_DIR = os.path.join(c.DATA_DIR, "SENDv1")
+DERIV_DIR = os.path.join(utils.Config.data_directory, "derivatives")
+RESULTS_DIR = os.path.join(utils.Config.data_directory, "results")
+SEND_DIR = os.path.join(utils.Config.stim_directory, "SENDv1")
 # send as in video dataset send
 
 # get a list of all the SEND video filenames
@@ -117,7 +119,7 @@ df["crowd_variability"] = df.apply(get_crowd_variability, axis=1)
 ### plot 
 g = sea.jointplot(data=df, x="actor2crowd_r", y="crowd_variability")
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-crowd_variability.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-crowd_variability.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -196,7 +198,7 @@ ax1.xaxis.set(major_locator=plt.MultipleLocator(1),
 ax2.xaxis.set(major_locator=plt.MultipleLocator(1),
               minor_locator=plt.FixedLocator(bins2))
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-correlations.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-correlations.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -235,7 +237,7 @@ for ax in g.axes.flat:
 g.fig.suptitle("Facial expressions conveyed in videos")
 
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-facial_expressions.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-facial_expressions.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -261,7 +263,7 @@ for ax in g.axes.flat:
 g.fig.suptitle("Language use in videos")
 g.tight_layout()
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-language.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-language.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -285,7 +287,7 @@ ax.scatter(X_pca[:,0], X_pca[:,1],
     s=20, color="blue", edgecolor="k",
     linewidth=.5, alpha=.8)
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-embeddings.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-embeddings.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -312,7 +314,7 @@ ax.yaxis.set(major_locator=plt.MultipleLocator(5),
 
 
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-sample_tcourses.png")
+export_fname = os.path.join(RESULTS_DIR, "SEND-sample_tcourses.png")
 plt.savefig(export_fname)
 plt.close()
 
@@ -320,5 +322,5 @@ plt.close()
 
 
 
-export_fname = os.path.join(EXPORT_DIR, "SEND-video_stats.csv")
+export_fname = os.path.join(DERIV_DIR, "SEND-video_stats.csv")
 df.to_csv(export_fname, index=False)

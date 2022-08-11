@@ -9,7 +9,6 @@ import os
 import utils
 
 DATA_SUBDIRECTORIES = [
-    "source",           # for the RAW data -- no touchey.
     "derivatives",      # for mid-stage, between source and results
     "results",          # for final output (plots, stats tables, etc.)
     "results/hires",    # for high resolution plots (vector graphics)

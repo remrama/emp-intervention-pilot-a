@@ -18,7 +18,7 @@ SAMPLE_RATE = .5
 
 
 import_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-data.csv")
-export_fname = os.path.join(utils.Config.data_directory, "results", "empathy-correlations_temporal_plot.png")
+export_fname = os.path.join(utils.Config.data_directory, "results", "empathy-correlation_tcourse.png")
 
 
 # load data

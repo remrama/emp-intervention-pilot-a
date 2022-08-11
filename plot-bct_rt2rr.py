@@ -44,7 +44,7 @@ AXIS_PARAMS = [
 ]
 
 
-colors = [ subj_palette[s] for s in table.columns ]
+colors = [ subj_palette[s] if s in subj_palette else "gray" for s in table.columns ]
 xvals = table.index.values
 
 fig, axes = plt.subplots(nrows=3, figsize=FIGSIZE, sharex=True)

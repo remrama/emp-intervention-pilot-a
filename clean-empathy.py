@@ -74,9 +74,6 @@ df.query("participant_id==81")["responses"]
 df["pre_post"] = df["trial"].apply(lambda x: "pre" if x < 6 else "post")
 df["pre_post"] = pd.Categorical(df["pre_post"],
         categories=["pre", "post"], ordered=True)
-if "pilot" in utils.Config.data_directory:
-    df.loc[1, "pre_post"] = "post"
-    print("REMOVE AFTER PILOT")
 
 
 # extract a meaningful code representing the video of each trial
@@ -96,14 +93,18 @@ df["response_list"] = df["responses"].apply(json.loads)
 
 
 # Did they respond to all (empathy video) trials?
-# remove_participants = []
+remove_participants = []
 for pid, pid_df in df.groupby("participant_id"):
     n_no_response = pid_df["response_list"].str.len().eq(0).sum()
     if n_no_response > 0:
-        print(f"WARNING: participant {pid} did not respond to {n_no_response} empathy task trials. Keeping for now.")
-        # remove_participants.append(pid)
+        if n_no_response > 1:
+            remove_participants.append(pid)
+            action = "Removing"
+        else:
+            action = "Keeping"
+        print(f"WARNING: participant {pid} did not respond to {n_no_response} empathy task trials. {action} them.")
 
-# df = df[ ~df["participant_id"].isin(remove_participants) ]
+df = df[ ~df["participant_id"].isin(remove_participants) ]
 
 # break out the response list so each row
 # is a press rather than a single trial/video
