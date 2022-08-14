@@ -123,7 +123,7 @@ ax.tick_params(bottom=False)
 xmin = xvals[0] - BAR_KWARGS["width"]/2 - XLIM_EDGEBUFFER
 xmax = xvals[-1] + BAR_KWARGS["width"]/2 + XLIM_EDGEBUFFER
 ax.set_xlim(xmin, xmax)
-ax.set_ylim(-.2, 1)
+ax.set_ylim(-.2, 1.5)
 ax.yaxis.set(major_locator=plt.MultipleLocator(.5),
     minor_locator=plt.MultipleLocator(.1),
     major_formatter=plt.FuncFormatter(utils.no_leading_zeros))
