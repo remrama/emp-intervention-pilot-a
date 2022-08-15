@@ -57,6 +57,8 @@ python plot-empathy_tcourse.py  # => data/results/empathy-correlation_tcourse.pn
 python plot-empathy.py          # => data/results/empathy-correlation_stats.csv
                                 # => data/results/empathy-correlation_plot.png
 
+# Visualize video EAT variability.
+python plot-empathy_videos.py   # => data/results/empathy-video_variability.png
 # Plot some breath counting task results.
 python plot-bct_respiration.py  # => data/results/bct-respiration.csv
                                 # => data/results/bct-respiration.png

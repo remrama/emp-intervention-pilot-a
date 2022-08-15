@@ -13,6 +13,7 @@ python analyze-empathy.py
 python plot-empathy_tcourse.py
 python plot-empathy.py
 python plot-randomization.py
+python plot-empathy_videos.py
 
 python plot-bct_respiration.py
 python plot-bct_presses.py

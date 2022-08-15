@@ -11,7 +11,7 @@ subj_palette = utils.load_subject_palette()
 
 
 import_fname = os.path.join(utils.Config.data_directory, "derivatives", "empathy-correlations.csv")
-export_fname = os.path.join(utils.Config.data_directory, "results", "emp-videocorrs.png")
+export_fname = os.path.join(utils.Config.data_directory, "results", "empathy-video_variability.png")
 
 df = pd.read_csv(import_fname)
 
@@ -43,7 +43,7 @@ bct_subjs = get_subjs.loc["bct"]
 rest_subjs = get_subjs.loc["rest"]
 
 
-colors = [ subj_palette[s] for s in table.index ]
+colors = [ subj_palette[s] if s in subj_palette else "gray" for s in table.index ]
 
 FIGSIZE = (3, 3)
 NROWS = 3
